@@ -7,7 +7,7 @@ from tqdm import tqdm
 from utils import *
 
 # 日志聚类
-class Logcluster:
+class LogCluster:
     def __init__(self, logTemplate='', logIDL=None, eventId=None):
         self.logTemplate = logTemplate
         self.eventId = eventId
@@ -121,7 +121,6 @@ class Drain:
 
         t1 = time.time()
 
-
         with open(inputFile) as lines:
             count = 0
             event_num = 1
@@ -131,6 +130,7 @@ class Drain:
                 logID = count
                 # TODO 还是要通过传参方式来实现
                 logmessageL = [word for i, word in enumerate(logmessageL) if i not in self.removeCol]
+                logmessageL = num2word(logmessageL)
                 cookedLine = ' '.join(logmessageL)
 
                 blkId_list = re.findall(r'(blk_-?\d+)', cookedLine)
@@ -143,7 +143,7 @@ class Drain:
                 matchCluster = self.treeSearch(logmessageL)
                 # Match no existing log cluster
                 if matchCluster is None:
-                    matchCluster = Logcluster(logTemplate=logmessageL, logIDL=[[logID, blkId_list]], eventId=event_num)
+                    matchCluster = LogCluster(logTemplate=logmessageL, logIDL=[[logID, blkId_list]], eventId=event_num)
                     event_num += 1
                     self.logClusters.append(matchCluster)
                     self.insert(matchCluster)
